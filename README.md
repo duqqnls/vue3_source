@@ -1,6 +1,4 @@
 # vue3_source
-# git
-
 git init
 git config --global user.name "duqqnls"
 git config --global user.email duqqnls123@naver.com
