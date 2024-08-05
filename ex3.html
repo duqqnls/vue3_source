@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Vue3 라이브러리 로딩 : CDN -->
+    <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+빌트인 디렉티브 : HTML 태그 안에 들어가는 속성 역할을 하며, v-라는 접두어가 붙는다.<br>
+디렉티브는 DOM 엘리먼트가 뭔가를 수행하도록 지시하는 특수한 토큰이다.<br>
+<div id="app">
+    <a href="{{link}}">🥵다음으로 링크 - (에러)🥵</a><br>
+    <!-- directive 사용 : 동적으로 href 속성을 vue 인스턴스의 link 데이터 속성과 연결 -->
+    <a v-bind:href="link">😘다음으로 링크😘</a><br>
+    <a :href="link">😘다음으로 링크😘</a><br>
+    <img v-bind:src="imageSrc" alt="동적 이미지" /><br>
+    <h2 v-text="say"></h2><br>
+    <h2>data 속성값1 : {{say}} </h2><br>
+    <h2 v-once="say">data 속성값2 : {{say}} </h2><br> <!-- 19라인의 <h2 v-text="say"></h2><br> 의미는 같다. -->
+    <h3> 함수 호출 결과 : {{sayFunc()}} </h3>
+    
+    <hr>
+    <span v-text="aLinkNaver">🥵문자열 그대로 출력(innerText) - (에러)🥵</span><br>
+    <span v-html="aLinkNaver">😘문자열 그대로 출력(innerHTML)😘</span><br>
+    
+    <hr>
+    <!-- 양방향 데이터 바인딩 : v-model은 v-bind + v-on -->
+    이름은 <input type="text" v-model="name"> {{name}}<br>
+    이름은 <input type="text" v-bind:value="name" v-on:input="changeName"> {{name}}<br>
+    이름은 <input type="text" :value="name" @input="changeName"> {{name}}<br>
+    
+    <hr>
+    <!-- 계산된 프로퍼티 관련 -->
+    a = {{a}}, b={{b}}<br>
+    a값 입력 : <input type="text" v-model="a" /><br/>
+    입력된 a : {{a}} (타입 : {{typeof a}})<br>
+    a값 입력 : <input type="text" v-model.number="a" /><br/>
+
+    <hr>
+    제어문 : 조건판단문 if, 반복문<br/>
+    <h2 v-if="nai >= 20">nai가 20 이상</h2> 
+    <h2 v-else-if="nai === 20">nai가 20 이네요</h2>
+    <h2 v-else>nai가 20 미만</h2>
+    
+    <br/>
+    제어문 : 반복문 for<br/>
+    <h3>오늘 할 일</h3>
+    <ul>
+        <li v-for="(todo, index) in todos" :key="index">{{todo.msg}}</li>
+    </ol>
+
+</div>
+
+<script>
+const {createApp} = Vue;
+createApp({
+    data() {
+        return{
+            link:'https://cafe.daum.net/flowlife',
+            imageSrc:'pic1.jpg',
+            say:'duqqnls',
+            aLinkNaver:'<a href="https://naver.com">네이버로 링크</a>',
+            name : '송여빈',
+        
+            a:'1',  // a : 문자열 데이터
+            nai:24, 
+            todos : [
+                {msg:'아침 먹고'},
+                {msg:'점심 먹고'},
+                {msg:'집에 가기'},
+            ],
+        }
+    },
+    methods: {
+        sayFunc() { 
+            this.say = '지금 난 푸딩이 먹고싶다...'
+            return this.say;
+        },
+        changeName(e) {
+            this.name = e.target.value;
+        },
+    },
+    computed: {   // computed properties : 함수처럼 작동. 차이는 계산된 프로퍼티가 의존하는 요소가 변경되면 반응 
+        b() {
+            return this.a + 1;
+        }
+    }
+}).mount("#app");
+</script>
+</body>
+</html>
