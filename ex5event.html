@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/vue@3"></script>
 </head>
 <body>
-* Vue 이벤트 처리 *<br>
+<h1>* Vue 이벤트 처리 *</h1><br>
 html 이벤트는 DOM 엘리먼트에서 일어난다. (서버에서 읽기 종료, 입력폼 전송, 버튼 클릭...)
 <br>
 Vue에서 DOM 이벤트를 Listen 하려면 해당 엘리먼트에 v-on을 사용하면 된다. <br>
@@ -17,5 +17,101 @@ Vue에서 DOM 이벤트를 Listen 하려면 해당 엘리먼트에 v-on을 사�
 이벤트 버스(event bus) : 이벤트 간에 데이터를 전달할 수 있는 방법을 말한다.<br>
 사용 방법은 $emit(이벤트생성), $on(이벤트호출), $off(이벤트제거)<br>
 보내는 컴포넌트에는 .$emit()을, 받는 컴포넌트에는 .$on()을 구현한다.
+<hr>
+<div id="app">
+    <!-- @click / v-on:click은 동일 -->
+    주사위 수 : {{number}} <button @click="rollDiceEvent">주사위 던지기</button>
+    <br>
+    주사위 수 + 10 : {{number2}} <button v-on:click="rollDiceEvent2(10)">주사위 던지기 + 10</button>
+    <br><br>
+    숫자 증가 : {{count}}<br>
+    숫자 x 2 : {{count * 2}}<br>
+    숫자 삼항 연산자 : {{count % 2 == 0 ? "even" : "odd" }}
+    <br>
+    <!-- @click에 바로 연산 넣어도 가능 -->
+    <button @click="count += 1">클릭으로 숫자 증가</button>
+    <button @click="count++">클릭으로 숫자 증가</button>
+
+</div>
+<script>
+    const app = Vue.createApp({
+        data(){
+            return{
+                number:0,
+                number2:0,
+                count:0,
+            }
+        },
+        methods: {
+            rollDiceEvent(){                    
+                let num = Math.floor(Math.random() * 6 + 1) // 1~6 사이 임의 정수
+                this.number = num;
+            },
+            rollDiceEvent2(arg){
+                let num = Math.floor(Math.random() * 6 + 1 + arg) // 1~6 사이 임의 정수 + 10
+                this.number2 = num;
+            },
+        },
+    }).mount('#app');
+</script>
+<hr>
+
+<div id="app2">
+    <!-- 부모 컴포넌트에서 자식 컴포넌트로 데이터 전달시 props 사용 -->
+    메세지 : <child-component :propsdata="message"></child-component>
+</div>
+<script>
+    const app2 = Vue.createApp({
+        data() {
+            return {
+                message:"안녕 뷰~ 부모 컴포넌트에서 자식 컴포넌트로 전달 메세지"
+            }
+        },
+    });
+app2.component('child-component', {
+    props:['propsdata'], // 부모로부터 propsdata라는 프로퍼티를 받음
+    template:'<span>{{propsdata}}</span>'
+    // props 사용하는 경우 : 동일한 내용이 같은 부분에서 자주 반복되는 경우에 컴포넌트를 이용한다.
+    // ex) 사용자 댓글, 블로그 게시글, 썸네일..등 전체적인 큰 틀은 중복되나, 그 안의 내용이 다른 부분이 있는 경우,
+    // 컴포넌트 선언시 props를 사용해 다른 내용을 전달할 수 있다.
+    // * props tag명, props 이름 줄 때 주의 *
+    // props-data (kebab case) or props_data (snake case) - 가능
+    // propsData (camel case) 불가능 (사용금지)
+    
+});
+app2.mount('#app2')
+</script>
+<hr>
+
+<div id="app3">
+    <child-component @show-log="printText"> </child-component>
+    <h2>{{msg}}</h2>
+</div>
+<script>
+const app3 = Vue.createApp({
+        data() {
+            return {
+                msg:'',
+            }
+        },
+        methods:{
+            printText(){
+                const logMessage = "이벤트 수신 성공"; 
+                console.log(logMessage);
+                this.msg = logMessage;
+            }
+        }
+    });
+app3.component('child-component', {
+    template:'<button @click="showLog">버튼 눌러</button>',
+    methods:{
+        showLog(){
+            this.$emit('show-log'); // 보내는 컴포넌트 .$emit()
+        }
+    }
+});
+app3.mount('#app3')
+
+</script>
 </body>
 </html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Vue3 라이브러리 로딩 : CDN -->
+    <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+    <div id="app">
+        <h2>성적 관리</h2>
+        이 름 : <input type="text" v-model="name" size="15"/><br/>
+        자 바 : <input type="text" v-model="java" size="15"/><br/>
+        리액트: <input type="text" v-model="react" size="15"/><br/>
+          뷰  : <input type="text" v-model="vue" size="15"/><br/>
+        <button @click="onClick">확인</button>
+
+        <h2>입력 결과</h2>
+        <ul>
+            <div v-if="count >=1">
+            <li v-for="(item, index) in student" :key="index">
+                {{item.name}}:{{item.java}}, {{item.react}}, {{item.vue}} 총점:{{item.num}}
+            </li>
+            </div>
+        </ul>
+
+        <h2>전체 통계</h2>
+        인원수: {{count}} 전체 총점 {{final}}
+    </div>
+
+    <script>
+    const {createApp} = Vue;
+    createApp({
+        data() {
+            return {
+            name:'',
+            java:0,
+            react:0,
+            vue:0,
+            count:0,
+            student : [], 
+            num: 0,
+            final:0
+            }
+        },
+        methods: {
+        onClick(){
+            this.count++;
+            this.num = this.java + this.react + this.vue;
+            this.student.push({name:this.name, java:this.java, react:this.react, vue:this.vue, num:this.num})
+            this.final = this.num + this.final;
+            this.name = '';
+            this.java = 0;
+            this.react = 0;
+            this.vue = 0;
+        }
+    },
+
+    }).mount('#app');
+    </script>
+</body>
+</html>
