@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- Vue3 라이브러리 로딩 : CDN -->
+    <script src="https://unpkg.com/vue@3"></script>
+    <script>
+    let datas = [
+        ['석구', 3], ['교환', 6], ['우석', 2], ['원빈', 1], ['소희', 10]
+    ];
+    google.charts.load('current', {packages:['corechart']});
+    google.charts.setOnLoadCallback(drawFunc); // 콜백 이용 
+
+    function drawFunc() {
+        let data = google.visualization.arrayToDataTable([
+            ['종류','갯수'], ...datas
+            // [['도시락', 3] ['김밥', 6]... ] 2차원 배열
+        ]);
+        let options = {title:'😍사랑합니다😍', is3D:true}; // 3차원
+        let chart = new google.visualization.PieChart(document.querySelector('#chart_div'))
+        chart.draw(data, options);
+    }
+    </script>
+</head>
+<body>
+    <h2>구글 차트(원 그래프) 그리기</h2>
+    남편 선택<br>
+    <div id="chart_div" style="height : 500px"></div>
+    <div id="app">
+        <li v-for="(value, index) in dataArray" :key="index">
+            {{value[0]}} : {{value[1]}} 
+            <button @click="addOneFunc(index)">1 증가</button>&nbsp;
+            <button @click="subOneFunc(index)">1 감소</button>
+        </li>
+    </div>
+
+    <script>
+        const {createApp} = Vue;
+        createApp({
+            data(){
+                return{
+                    dataArray:datas
+                }
+            },
+            methods: {
+                addOneFunc(index) {
+                    this.dataArray[index][1]++;
+                    this.updateChart();
+                    
+                },
+                subOneFunc(index) {
+                    if(this.dataArray[index][1] > 0)
+                    this.dataArray[index][1]--;
+                    this.updateChart();
+                },
+                updateChart(){ // 차트 갱신 
+                    drawFunc();
+                }
+            },
+        }).mount('#app');
+    </script>
+</body>
+</html>

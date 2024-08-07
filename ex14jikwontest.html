@@ -1,0 +1,70 @@
+<!-- ECLIPSE 파일 경로 : web_react 프로젝트 -> jikwontest.jsp
+jsp파일을 이용한 직급입력시 직원수 출력 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Vue3 라이브러리 로딩 : CDN -->
+    <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+<div id="app">
+    직급 입력 : <input type="text" size="10" v-model="jikname" >
+    <button @click="onclick">확인</button>
+
+    <table v-if="jikwondatas.length > 0">
+        <tr>
+            <th>사번</th><th>이름</th><th>부서명</th><th>직급</th><th>연봉</th>
+        </tr>
+        <tr v-for="(jikwon, index) in jikwondatas" :key="index">
+            <td>{{jikwon.no}}</td>
+            <td>{{jikwon.name}}</td>
+            <td>{{jikwon.bname}}</td>
+            <td>{{jikwon.jik}}</td>
+            <td>{{jikwon.pay}}</td>
+        </tr>
+    </table>
+    <br>인원수 : {{ jikwondatas.length }}명 / 연봉 평균 : {{ avgPay }}만원
+</div>
+
+<script>
+    const {createApp} = Vue;
+    createApp({
+        data() {
+            return {
+                jikname:'',
+                jikwondatas:[],
+                count:0,
+                avgPay:0,
+            }
+        }, methods: {
+            onclick() {
+                //console.log(this.jikname);
+                fetch('http://localhost:8080/web_react/jikwontest.jsp?jikname=' + this.jikname)
+    
+                .then(response => {
+                    if(response.ok){
+                        return response.json();
+                    }
+                    throw new Error('Ajax 에러');
+                })
+                .then(data => {
+                    this.jikwondatas = data.jikwon;
+                    this.avgPay = this.jikwondatas.reduce((result, jd) => {
+                  return (result += parseInt(jd.pay));
+                    }, 0);
+                    this.avgPay = Math.round(this.avgPay / this.jikwondatas.length)
+                
+                })
+
+                .catch(error => {
+                    console.log('직원 자료 읽기 오류 :', error)
+                })
+            }
+        },
+    }).mount('#app');
+</script>
+</body>
+</html>
